@@ -179,7 +179,7 @@ The verification layer checks whether extracted FQNs actually exist in published
    - Omitted if verification didn't run (offline, no source_artifact, unsupported language)
 
 Currently Java only. The `Verifier` interface supports adding Go, Node.js, and C# verifiers.
-When Maven Central is unreachable, verification skips gracefully — all patterns get `skipped` status and the pipeline continues normally.
+When Maven Central is unreachable, verification skips without error — all patterns get `skipped` status and the pipeline continues normally.
 
 ## Labels
 

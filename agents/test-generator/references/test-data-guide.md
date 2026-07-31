@@ -29,6 +29,13 @@ For each rule, generate a COMPLETE, COMPILABLE project where the source code con
 4. Keep code minimal — one example per rule, just enough to trigger the pattern
 5. All imports/dependencies must be valid and resolve
 
+**Rules for choosing test versions (java.dependency):**
+1. The version MUST be strictly less than the `upperbound`
+2. Use a realistic version that actually exists for the artifact (check Maven Central)
+3. **Use plain numeric versions** (e.g., `2.3.0`) — kantra cannot compare qualified versions like `2.3-groovy-4.0` or `2.4-M4-groovy-4.0` against numeric bounds
+4. When in doubt, use a version in the `3.x` range — it's almost always below the upperbound and is a realistic Spring Boot 3.x era version
+5. Use the `name` field as `groupId.artifactId` (dot-separated). E.g., name `org.springframework.boot.spring-boot-starter-undertow` → `<groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter-undertow</artifactId>`
+
 ## Source Code Must Use the OLD (Source) API
 
 This is a common mistake. The test data simulates code that has NOT been migrated yet. Every import, annotation, type reference, and dependency version must use the **source** (pre-migration) API — never the target.
@@ -76,13 +83,6 @@ Example: a rule with `name: org.flywaydb.flyway-core` and `upperbound: 4.0.0`:
 - `<version>3.2.1</version>` → MATCHES (3.2.1 < 4.0.0)
 - `<version>9.22.0</version>` → DOES NOT MATCH (9.22.0 >= 4.0.0) — **test fails**
 - `<version>8.13.0</version>` → DOES NOT MATCH (8.13.0 >= 4.0.0) — **test fails**
-
-**Rules for choosing test versions:**
-1. The version MUST be strictly less than the `upperbound`
-2. Use a realistic version that actually exists for the artifact (check Maven Central)
-3. **Use plain numeric versions** (e.g., `2.3.0`) — kantra cannot compare qualified versions like `2.3-groovy-4.0` or `2.4-M4-groovy-4.0` against numeric bounds
-4. When in doubt, use a version in the `3.x` range — it's almost always below the upperbound and is a realistic Spring Boot 3.x era version
-5. Use the `name` field as `groupId.artifactId` (dot-separated). E.g., name `org.springframework.boot.spring-boot-starter-undertow` → `<groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter-undertow</artifactId>`
 
 **Handling artifacts that only publish qualified versions:**
 

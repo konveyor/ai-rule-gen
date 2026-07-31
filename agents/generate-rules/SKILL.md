@@ -52,7 +52,7 @@ Both commands invoke this skill. The user can override `checkpoint_behavior` exp
 
 ## References
 
-- `references/orchestrator-details.md` — status-line conventions, parallelism defaults, resume preconditions, rebuild behavior
+- [`references/orchestrator-details.md`](references/orchestrator-details.md) — status-line conventions, parallelism defaults, resume preconditions, rebuild behavior
 
 ## Permissions
 
@@ -89,11 +89,11 @@ If a required action is not permitted, stop and report the limitation — do NOT
 - Do not block after testing starts; continue even if some rules remain failing.
 - Fix only failing rules, not the full suite.
 
-For pipeline logging conventions, see `references/orchestrator-details.md` (Pipeline Transcript section).
+For pipeline logging conventions, see [`references/orchestrator-details.md`](references/orchestrator-details.md) (Pipeline Transcript section).
 
-For stage timing instructions, see `references/orchestrator-details.md` (Timing section).
+For stage timing instructions, see [`references/orchestrator-details.md`](references/orchestrator-details.md) (Timing section).
 
-For sub-agent invocation protocol and contract validation, see `references/orchestrator-details.md` (Sub-agent Protocol section).
+For sub-agent invocation protocol and contract validation, see [`references/orchestrator-details.md`](references/orchestrator-details.md) (Sub-agent Protocol section).
 
 ## Pipeline
 
@@ -123,7 +123,7 @@ Determine the migration directory path:
 mkdir -p output/<source>-to-<target>-<YYYYMMDD-HHMMSS>
 ```
 
-Every `go run` command should be a standalone invocation with fully-expanded arguments — substitute actual paths and flag values directly into each command. Do not use shell variable assignments (`VAR=...`) or compound `&&` chains, since these don't match the permissions table.
+Every `go run` command should be a standalone invocation with fully-expanded arguments — substitute actual paths and flag values directly into each command. Use one complete, self-contained command per invocation; do not use shell variable assignments (`VAR=...`) or compound `&&` chains, since these don't match the permissions table.
 
 The log flags are: `--log <migration_dir>/pipeline.log --agent orchestrator --model <your_model_id>`. Append these literally to every CLI invocation.
 

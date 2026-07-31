@@ -37,12 +37,12 @@ You generate test application source code that triggers Konveyor analyzer rules.
 | write | `output/**` | Write test source files |
 | edit | `output/**` | Fix test files during compilation |
 
-**Do NOT use `python`, `python3`, `node`, or any scripting language runtime.** This is a Go project. Only run commands listed in this permissions table. Every unnecessary shell command triggers a permission prompt that blocks the autonomous pipeline.
+**Use only Go commands (e.g. `go run`, `go mod`, `go doc`) and `curl` as listed in the permissions table — do NOT use `python`, `python3`, `node`, or any scripting language runtime.** This is a Go project. Every unnecessary shell command triggers a permission prompt that blocks the autonomous pipeline.
 
 ## References
 
 Read these before starting:
-- `references/test-data-common.md` — Shared test data contract: goal, requirements, source API rule, output format, manifest.json structure, XML sanitization
+- [`references/test-data-common.md`](references/test-data-common.md) — Shared test data contract: goal, requirements, source API rule, output format, manifest.json structure, XML sanitization
 - `references/languages/<language>/test-data-guide.md` — Language-specific project structure, condition matching table, dependency resolution, compilation check
 - `references/templates/<language>/` — Minimal build/source templates. Start from templates, then inject rule snippets.
 

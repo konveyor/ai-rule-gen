@@ -45,16 +45,16 @@ You extract migration patterns from a migration guide and produce validated Konv
 | write | `patterns*.json` | Write extracted patterns |
 | write | `output/**` | Write generated rule YAML and patterns |
 
-**Do NOT use `python`, `python3`, `node`, or any scripting language runtime.** This is a Go project. Only run commands listed in this permissions table. Do not validate JSON yourself — the orchestrator runs `merge-patterns` and `construct` which validate the JSON. Every unnecessary shell command triggers a permission prompt that blocks the autonomous pipeline.
+**Use only `go run` commands listed in this permissions table; do NOT use `python`, `python3`, `node`, or any scripting language runtime.** This is a Go project. Do not validate JSON yourself — the orchestrator runs `merge-patterns` and `construct` which validate the JSON. Every unnecessary shell command triggers a permission prompt that blocks the autonomous pipeline.
 
 ## References
 
 Read these before starting:
-- `references/patterns-json-schema.md` — The patterns.json contract (what fields to extract, what the CLI does with them)
+- [`references/patterns-json-schema.md`](references/patterns-json-schema.md) — The patterns.json contract (what fields to extract, what the CLI does with them)
 - `references/languages/<language>/condition-types.md` — Provider-specific conditions for the detected language (java, go, nodejs, csharp, python)
 - `references/languages/<language>/checklist.md` — Language-specific extraction guidance (TABLE format, package/module consolidation, location types)
-- `references/builtin-conditions.md` — Language-agnostic builtin conditions (filecontent, xml, json, file, hasTags, xmlPublicID)
-- `references/rule-schema.md` — Rule YAML structure, required fields, validation rules
+- [`references/builtin-conditions.md`](references/builtin-conditions.md) — Language-agnostic builtin conditions (filecontent, xml, json, file, hasTags, xmlPublicID)
+- [`references/rule-schema.md`](references/rule-schema.md) — Rule YAML structure, required fields, validation rules
 - `references/languages/<language>/instructions.md` — Language-specific instructions (registry pre-checks, source artifact resolution, validation notes)
 - `references/examples/<language>.md` — Worked extraction examples for the detected language (guide text -> checklist -> patterns.json). Read ONLY the file matching the detected language.
 
@@ -80,7 +80,7 @@ If the orchestrator didn't provide sources, targets, or language, detect them fr
 {"sources": ["framework-v3", "framework"], "targets": ["framework-v4", "framework"], "language": "java"}
 ```
 
-Use lowercase, hyphenated names (e.g., `framework-v3` not `Framework V3`). Include both a version-specific label and a generic label when appropriate (following Konveyor rulesets conventions).
+Use lowercase, hyphenated names (e.g., `framework-v3` not `Framework V3`). Include both a version-specific label and a generic label when the guide names a specific version (e.g., `framework-v3`) and also refers to the technology generically (e.g., `framework`) — following Konveyor rulesets conventions.
 
 ### 2. Index all sections
 
@@ -113,7 +113,7 @@ Process **each section from the index individually**. For each section:
 
 | # | Question | If yes → extract |
 |---|----------|-------------------|
-| 1 | Does the section mention a **removed** feature, library, or integration? | `*.dependency` on the removed artifact. "Removed" ALWAYS means detectable. |
+| 1 | Does the section mention a **removed** feature, library, or integration? | `*.dependency` on the removed artifact. "Removed" means detectable — emit a rule. |
 | 2 | Does the section mention a class, type, annotation, or interface that was **removed or relocated**? | `*.referenced` on the old FQN. See `references/languages/<language>/checklist.md` for location type guidance. |
 | 3 | Does the section mention a dependency that **changed scope, was renamed, or now requires explicit versioning**? | `*.dependency` |
 | 4 | Does the section contain a **reference table** with old→new mappings? | Process every row as a separate pattern — **unless** the section describes a package/module/namespace-level rename, in which case consolidate (see "Package/module/namespace-level consolidation" below). See `references/languages/<language>/checklist.md` for language-specific location types. |
@@ -251,9 +251,9 @@ See `references/languages/<language>/checklist.md` for language-specific locatio
 
 #### Multi-class changes → use `alternative_fqns`
 
-When a single migration change removes or deprecates **multiple classes or methods together**, create ONE pattern with the primary FQN in `source_fqn` and ALL other affected FQNs in `alternative_fqns`. The construct tool generates an `or` condition automatically — do NOT create separate rules for classes removed as part of the same change.
+When a single migration change removes or deprecates **multiple classes or methods together**, create ONE pattern with the primary FQN in `source_fqn` and ALL other affected FQNs in `alternative_fqns`. The construct tool generates an `or` condition automatically — do not create separate rules for classes removed as part of the same change.
 
-For each pattern, provide the fields defined in `references/patterns-json-schema.md`. At minimum: `source_pattern`, `rationale`, `complexity`, `category`.
+For each pattern, provide the fields defined in [`references/patterns-json-schema.md`](references/patterns-json-schema.md). At minimum: `source_pattern`, `rationale`, `complexity`, `category`.
 
 **Always populate `documentation_url`** with the most specific URL available. If the migration guide has section anchors or issue IDs, append them to the URL. A link to a 500-line page is not actionable — a link to the exact section is. If no anchor exists, use the base guide URL. The construct CLI converts this into a `links:` entry in the rule YAML so users can find the original migration guidance.
 
@@ -261,7 +261,7 @@ For each pattern, provide the fields defined in `references/patterns-json-schema
 
 When a migration requires users to ADD something (a new annotation, a new dependency, a new config), you cannot detect its absence. Instead, detect the **artifact that is affected** and warn about the required change.
 
-For example: if a test annotation no longer auto-configures a helper class, don't try to detect the missing annotation. Instead, detect the helper class usage (`*.referenced`) and warn that the annotation is now required.
+For example: if a test annotation no longer auto-configures a helper class, do not detect the missing annotation. Instead, detect the helper class usage (`*.referenced`) and warn that the annotation is now required.
 
 ### Source FQN must be a source-side (pre-migration) artifact
 
@@ -360,8 +360,8 @@ Each difference is a separate pattern. If the guide shows source-version code in
 B can be an intermediate version (e.g., v2-compat) or an intermediate package
 (e.g., a compatibility shim namespace).
 
-- If `source_fqn` detects an A-version artifact, your message MUST describe
-  the A → B step, NOT the A → C step.
+- If `source_fqn` detects an A-version artifact, the migration message describes
+  the A → B step, not the A → C step.
 - If both steps need separate rules, create two patterns with different
   `source_fqn` values — one detecting A (message: migrate to B),
   one detecting B (message: migrate to C).
@@ -383,7 +383,7 @@ Collect flagged patterns in a `suspected_kantra_limitations` list and return it 
 
 ### Choosing the right condition type
 
-See `references/languages/<language>/condition-types.md` for the language-specific condition-type reference and `references/patterns-json-schema.md` for which fields map to which condition type.
+See `references/languages/<language>/condition-types.md` for the language-specific condition-type reference and [`references/patterns-json-schema.md`](references/patterns-json-schema.md) for which fields map to which condition type.
 
 **Do NOT use `builtin.filecontent` for code patterns.** If the pattern involves a class, method, import, or type reference, use the language-specific condition (e.g., `java.referenced`, `go.referenced`). Only use `builtin.filecontent` for config files, build scripts, and plain text that no language-specific provider can match.
 
@@ -391,7 +391,7 @@ See `references/languages/<language>/condition-types.md` for the language-specif
 
 ### What counts as an extractable migration item
 
-See the full list in `references/patterns-json-schema.md` under "What Counts as an Extractable Pattern." Be thorough — if a section names a concrete artifact, it is extractable.
+See the full list in [`references/patterns-json-schema.md`](references/patterns-json-schema.md) under "What Counts as an Extractable Pattern." If a section names a concrete artifact, it is extractable — emit a pattern for it.
 
 ### 4. Coverage report
 

@@ -13,6 +13,24 @@ This is the contract between the agent (which extracts migration patterns) and `
 - Guidelines for Pattern Extraction
 - What Counts as an Extractable Pattern
 
+## Source Artifact Resolution
+
+For `*.referenced` patterns (`java.referenced`, `go.referenced`, etc.), emit `source_artifact` so the deterministic verifier can confirm the FQN exists in the published library. This catches hallucinated FQNs before rules are constructed.
+
+**When to emit:**
+- `*.referenced` patterns: ALWAYS when the source library and version are known from the guide context
+- `*.dependency` patterns: NOT needed (already verified by registry pre-check)
+- `builtin.*` patterns: NOT applicable
+
+**How to determine coordinates:**
+1. Read the migration guide for the source framework version (e.g., "migrating from v3.5.x" → version `3.5.0`)
+2. Map the FQN's package to the correct artifact in the language's package registry
+3. Use the **source** version (the version being migrated FROM), not the target version
+
+See `references/languages/<language>/instructions.md` for language-specific coordinate format and examples.
+
+**If unsure:** Omit `source_artifact` — the verifier skips gracefully with status `skipped`. A missing `source_artifact` is better than a wrong one.
+
 ## Format
 
 ```json
@@ -104,24 +122,6 @@ The examples above use Java, but the schema works for all languages — substitu
 **Minimum required fields per pattern:** `source_pattern`, `rationale`, `complexity`, `category`.
 
 **Response format:** The extraction output must be valid JSON — no explanations, no markdown fences.
-
-## Source Artifact Resolution
-
-For `*.referenced` patterns (`java.referenced`, `go.referenced`, etc.), emit `source_artifact` so the deterministic verifier can confirm the FQN exists in the published library. This catches hallucinated FQNs before rules are constructed.
-
-**When to emit:**
-- `*.referenced` patterns: ALWAYS when the source library and version are known from the guide context
-- `*.dependency` patterns: NOT needed (already verified by registry pre-check)
-- `builtin.*` patterns: NOT applicable
-
-**How to determine coordinates:**
-1. Read the migration guide for the source framework version (e.g., "migrating from v3.5.x" → version `3.5.0`)
-2. Map the FQN's package to the correct artifact in the language's package registry
-3. Use the **source** version (the version being migrated FROM), not the target version
-
-See `references/languages/<language>/instructions.md` for language-specific coordinate format and examples.
-
-**If unsure:** Omit `source_artifact` — the verifier skips gracefully with status `skipped`. A missing `source_artifact` is better than a wrong one.
 
 ## What `go run ./cmd/construct` Does With This
 

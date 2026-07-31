@@ -142,7 +142,7 @@ Read the JSON output. Note:
 - **Quality metrics** — which rules are missing messages, links, effort ratings, or before/after guidance
 - **App coverage** (if `app_dir` was provided) — which rules fired (confirmed working) and which didn't, how many incidents each rule generated
 
-This adds context but doesn't change verdicts — a rule can fire correctly but still have an inaccurate message, or not fire because the app doesn't use that API.
+This adds context but doesn't change verdicts — a rule can fire and produce incidents but still have an inaccurate message, or not fire because the app doesn't use that API.
 
 Include the deterministic eval summary in the report output (see Step 7).
 
@@ -162,7 +162,7 @@ Check the `when` condition against the guide:
 Refer to the loaded language reference for language-specific condition checks (location type appropriateness, pattern qualification, breadth concerns).
 
 Verdicts:
-- **pass** — pattern correctly targets the API described in the guide, condition type is appropriate
+- **pass** — pattern targets the API described in the guide and the condition type is appropriate
 - **warn** — pattern is mostly right but could be more precise (missing qualification, slightly wrong condition type, could match unrelated code in edge cases)
 - **fail** — pattern targets the wrong API, uses wrong condition type, or will clearly match incorrect code
 

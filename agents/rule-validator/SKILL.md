@@ -70,7 +70,7 @@ If the lookup fix doesn't resolve the failure, mark the rule as `still_failing` 
 ## References
 
 Read before starting:
-- `references/fix-strategies.md` — Fix loop flow, rule integrity principle
+- [`references/fix-strategies.md`](references/fix-strategies.md) — Fix loop flow, rule integrity principle
 - `references/languages/<language>/fix-strategies.md` — Condition-type fix lookup for the relevant language (java, go, nodejs, csharp, python)
 
 ## Workflow
@@ -139,4 +139,4 @@ For every rule in input `failing_rules`, emit one `results_by_rule` entry using 
 
 ## Rule Integrity
 
-See `references/fix-strategies.md` — Rule Integrity Principle. The rule is authoritative; fixes always target test data.
+See [`references/fix-strategies.md`](references/fix-strategies.md) — Rule Integrity Principle. The rule is authoritative; fixes always target test data.
